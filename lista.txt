@@ -1,0 +1,7 @@
+jao
+marcos
+root
+admin
+administrador
+secure
+msfadmin

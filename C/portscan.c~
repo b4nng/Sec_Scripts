@@ -1,25 +1,16 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
 
-int main(int argc, char *argv[]){
+main(){
 	int meusocket;
 	int conecta;
-	int *porta;
-	char *ip;
 
-	ip = argv[1];
-	porta = atoi(argv[2]);
-	
-	printf("%s, %d\n", ip, porta);
 	struct sockaddr_in alvo;
 
 	meusocket = socket(AF_INET, SOCK_STREAM, 0);
 	alvo.sin_family = AF_INET;
-	alvo.sin_port = htons(porta);
-	alvo.sin_addr.s_addr = inet_addr(ip);
+	alvo.sin_port = htons(80);
+	alvo.sin_addr.s_addr = inet_addr("192.168.100.1");
 
 	conecta = connect(meusocket, (struct sockaddr *)&alvo, sizeof alvo);
 

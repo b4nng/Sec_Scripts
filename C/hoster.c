@@ -3,6 +3,10 @@
 #include <arpa/inet.h>
 
 int main (int argc, char *argv[]){
+	if(argc < 1){
+		printf("Usage ./hoster IP\n");
+		return -1;
+	}	
 	char *alvo;
 	alvo = argv[1];
 	struct hostent *host;

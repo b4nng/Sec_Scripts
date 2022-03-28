@@ -220,3 +220,4 @@ princess
 solo
 qwertyuiop
 starwars
+kali

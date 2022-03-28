@@ -1,2 +1,2 @@
 #!/bin/bash
-timeout -k 1 1 ./porttester.py $1 $2
+timeout -k 2 2 ./porttester.py $1 $2

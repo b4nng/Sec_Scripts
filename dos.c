@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 	{
 	meusocket = socket(AF_INET, SOCK_STREAM, 0);
 	alvo.sin_family = AF_INET;
-	alvo.sin_port = htons(21);
+	alvo.sin_port = htons(80);
 	alvo.sin_addr.s_addr = inet_addr(destino);
 
 	conecta = connect(meusocket, (struct sockaddr *)&alvo, sizeof alvo);

@@ -7,7 +7,7 @@ else
 	file=tempHTML
 	touch $file
 	wget -O $file $1 -q
-	echo '<===========[+] HREF links [+]===========>'
+	echo -n '<===========[+] HREF links [+]===========>'
 	cat tempHTML| sed 's/ /\n/g' | egrep 'href' | cut -d '"' -f2 | sort | uniq
 	echo ''
 	echo "<===========[+] SRC links [+]===========>"

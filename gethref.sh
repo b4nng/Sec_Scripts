@@ -12,5 +12,8 @@ else
 	echo ''
 	echo "<===========[+] SRC links [+]===========>"
 	cat tempHTML| sed 's/ /\n/g' | egrep 'src' | cut -d '"' -f2 | sort | uniq
+	echo ''
+	echo "<===========[+] ACTION links [+]===========>"
+	cat tempHTML| sed 's/ /\n/g' | egrep 'action' | cut -d '"' -f2 | sort | uniq
 	rm $file
 fi

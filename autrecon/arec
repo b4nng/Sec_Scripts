@@ -21,25 +21,34 @@ def screen_block(text):
     blankspace_size = (tsize - len(text)) // 2
     blankspace = ' ' * (blankspace_size - 1)
     divider()
-    print('|' + blankspace + text + blankspace + '|') 
+    print('|' + blankspace + text + blankspace + '|')
     divider()
+
+def run_wafwoof():
+    screen_block('WAF detection')
+    os.system(command)
+    with open(args.hostlist, 'r') as f:
+        file_host = f.readline()
+        while file_host:
+            command = f"wafw00f {file_host.strip()} | egrep '\[[+-]\]'"
+            os.system(command)
+            file_host = f.readline()
 
 # Runs NMAP and returns the ports open
 def run_nmap():
-    screen_block('NMAP - Open ports, Syn, Default Script')
-    command = "sudo nmap -sS -sC -iL hosts.txt -vv --open -oN recon/nmap.txt | grep /tcp | grep -v 'Discovered'"
-    with subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, text=True, universal_newlines=True) as p:
+    screen_block('NMAP - Open ports, Syn Scan')
+    command = "sudo nmap -sS -iL hosts.txt -vv --open --top-ports=10 -oN recon/nmap.txt | grep /tcp | grep -v 'Discovered'"
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=True, universal_newlines=True) as p:
         output = ''
         for l in p.stdout:
             print(l, end='', flush=True)
             output = f'{output}{l}'
         pattern = r"([0-9]+)/tcp"
         return re.findall(pattern, output)
-            
 
 def run_gobuster():
     with open(args.hostlist, 'r') as f:
-        file_host = f.readline() 
+        file_host = f.readline()
         while file_host:
             screen_block(f'Directories GOBUSTER {GOBUSTER_WORDLIST}')
             command = f'gobuster dir -t 50 --wordlist={GOBUSTER_WORDLIST} -u {file_host.strip()} --random-agent --no-error -r -q -e'
@@ -57,6 +66,7 @@ if __name__=='__main__':
     if(args.hostlist is not None):
         ports = run_nmap()
         if('80' in ports):
+            run_wafwoof()
             run_gobuster()
         #run_gobuster()
         #run_subfinder()

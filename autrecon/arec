@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+# Start recon with URL as parameter
+# dirscan, wafwoof, gobuster, subfinder
+
+import os, sys, argparse, shutil, subprocess
+
+#GOBUSTER_WORDLIST='/usr/share/wordlists/dirb/big.txt'
+GOBUSTER_WORDLIST='test.txt'
+
+parser = argparse.ArgumentParser(description='Automatic recon para pentest')
+parser.add_argument('--hostlist', '-l', type=str, help='Lista de Hosts ou URLs')
+
+def traco():
+    s, _ = shutil.get_terminal_size()
+    print("-" * s)
+
+def run_nmap():
+    command = "sudo nmap -sS -sC -iL hosts.txt -vv --open -p- # | grep /tcp | grep -v 'Discovered'"
+    with subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, text=True, universal_newlines=True) as p:
+        output = ''
+        for l in p.stdout:
+            print(l, end='', flush=True)
+            output = f'{output}{l}'
+        if('80/tcp' in output): print('\nPORTA 80 ENCONTRADA')
+            
+
+def run_gobuster():
+    with open(args.hostlist, 'r') as f:
+        file_host = f.readline() 
+        while file_host:
+            traco()
+            print(f'Directories GOBUSTER\nWordlist : {GOBUSTER_WORDLIST}')
+            command = f'gobuster dir -t 50 --wordlist={GOBUSTER_WORDLIST} -u {file_host.strip()} --random-agent --no-error -r -q -e'
+            print(command+'\n')
+            os.system(command)
+            file_host = f.readline()
+
+def run_subfinder():
+    command = f'subfinder -dL {args.hostlist} -silent'
+    traco()
+    print(f'Subfinder:\n{command}\n')
+    os.system(command)
+
+if __name__=='__main__':
+    args = parser.parse_args()
+    if(args.hostlist is not None):
+        run_nmap()
+        #run_gobuster()
+        #run_subfinder()
+    # os.system(f'gobuster dir -t 50 --wordlist=/usr/share/wordlists/dirb/big.txt {args.hostlist} ')

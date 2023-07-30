@@ -10,5 +10,5 @@ if(len(sys.argv)!=3):
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Grabbing",ip,porta)
 s.connect((ip,porta))
-print(s.recv(1024))
+print(s.recv(1024).decode('utf-8'))
 s.close()

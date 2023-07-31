@@ -4,6 +4,10 @@
 # dirscan, wafwoof, gobuster, subfinder
 
 import os, sys, argparse, shutil, subprocess, re
+import concurrent.futures
+
+def timeout_handler(signum, frame):
+    raise TimeoutException("Timeout in function execution")
 
 #GOBUSTER_WORDLIST='/usr/share/wordlists/dirb/big.txt'
 GOBUSTER_WORDLIST='test.txt'
@@ -26,7 +30,6 @@ def screen_block(text):
 
 def run_wafwoof():
     screen_block('WAF detection')
-    os.system(command)
     with open(args.hostlist, 'r') as f:
         file_host = f.readline()
         while file_host:
@@ -34,10 +37,23 @@ def run_wafwoof():
             os.system(command)
             file_host = f.readline()
 
+def bannergrab(port):
+    os.system('bannergrab.py {}')
+
+def run_bannergrab(port_list):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for port in port_list:
+            if(port in ['80','443']): continue
+            try:
+                result = executor.submit(bannergrab, parametro).result(timeout=10)
+            except:
+                pass
+
+
 # Runs NMAP and returns the ports open
-def run_nmap():
+def run_nmap(_host):
     screen_block('NMAP - Open ports, Syn Scan')
-    command = "sudo nmap -sS -iL hosts.txt -vv --open --top-ports=10 -oN recon/nmap.txt | grep /tcp | grep -v 'Discovered'"
+    command = f"sudo nmap -sS {_host} -vv --open --top-ports=10 -oN recon/nmap.txt | grep /tcp | grep -v 'Discovered'"
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=True, universal_newlines=True) as p:
         output = ''
         for l in p.stdout:
@@ -46,14 +62,10 @@ def run_nmap():
         pattern = r"([0-9]+)/tcp"
         return re.findall(pattern, output)
 
-def run_gobuster():
-    with open(args.hostlist, 'r') as f:
-        file_host = f.readline()
-        while file_host:
-            screen_block(f'Directories GOBUSTER {GOBUSTER_WORDLIST}')
-            command = f'gobuster dir -t 50 --wordlist={GOBUSTER_WORDLIST} -u {file_host.strip()} --random-agent --no-error -r -q -e'
-            os.system(command)
-            file_host = f.readline()
+def run_gobuster(_host):
+    screen_block(f'Directories GOBUSTER {GOBUSTER_WORDLIST}')
+    command = f'gobuster dir -t 50 --wordlist={GOBUSTER_WORDLIST} -u {_host} --random-agent --no-error -r -q -e'
+    os.system(command)
 
 def run_subfinder():
     command = f'subfinder -dL {args.hostlist} -silent'
@@ -63,11 +75,15 @@ def run_subfinder():
 
 if __name__=='__main__':
     args = parser.parse_args()
-    if(args.hostlist is not None):
+    if(args.hostlist is None): exit()
+    with open(args.hostlist, 'r') as f:
+        _host = f.readline()
+        while _host:
+            _host = f.readline()
         ports = run_nmap()
         if('80' in ports):
             run_wafwoof()
             run_gobuster()
-        #run_gobuster()
         #run_subfinder()
     # os.system(f'gobuster dir -t 50 --wordlist=/usr/share/wordlists/dirb/big.txt {args.hostlist} ')
+    # se nao for vazia > for na lista > cada funcao roda com esse host

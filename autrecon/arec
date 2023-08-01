@@ -14,6 +14,11 @@ GOBUSTER_WORDLIST='test.txt'
 
 parser = argparse.ArgumentParser(description='Automatic recon para pentest')
 parser.add_argument('--hostlist', '-l', type=str, help='Lista de Hosts ou URLs')
+parser.add_argument('--no-nmap', action='store_true', help='No NMAP scan')
+parser.add_argument('--no-dirscan', action='store_true', help='No dirscan')
+parser.add_argument('--no-gobuster', action='store_true', help='No gobuster')
+parser.add_argument('--no-wafwoof', action='store_true', help='No wafwoof')
+parser.add_argument('--no-whois', action='store_true', help='No wafwoof')
 
 def divider():
     s, _ = shutil.get_terminal_size()
@@ -43,6 +48,11 @@ def run_bannergrab(port_list, host):
         if(port in ['80','443']): continue
         bannergrab(port,host)
 
+def run_whois(host):
+    screen_block('Whois')
+    command = f"whois {host} | grep -v '%' | awk NF"
+    os.system(command)
+
 # Runs NMAP and returns the ports open
 def run_nmap(_host):
     screen_block('NMAP - Open ports, Syn Scan')
@@ -60,7 +70,7 @@ def run_gobuster(_host):
     command = f'gobuster dir -t 50 --wordlist={GOBUSTER_WORDLIST} -u {_host} --random-agent --no-error -r -q -e'
     os.system(command)
 
-def run_subfinder():
+def run_subfinder(_host):
     command = f'subfinder -dL {args.hostlist} -silent'
     divider()
     print(f'Subfinder:\n{command}\n')

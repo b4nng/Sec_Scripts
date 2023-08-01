@@ -34,17 +34,14 @@ def run_wafwoof(_host):
     os.system(command)
 
 def bannergrab(port, host):
-    os.system('bannergrab.py {host} {port}')
+    command = f"timeout 10s bannergrab.py {host} {port}"
+    os.system(command)
 
 def run_bannergrab(port_list, host):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        for port in port_list:
-            if(port in ['80','443']): continue
-            try:
-                _p = [port,host]
-                result = executor.submit(bannergrab, _p).result(timeout=10)
-            except:
-                pass
+    screen_block('Banner Grabbing')
+    for port in port_list:
+        if(port in ['80','443']): continue
+        bannergrab(port,host)
 
 # Runs NMAP and returns the ports open
 def run_nmap(_host):
@@ -71,16 +68,17 @@ def run_subfinder():
 
 if __name__=='__main__':
     args = parser.parse_args()
-    if(args.hostlist is None): exit()
-    with open(args.hostlist, 'r') as f:
-        _host = f.readline()
-        _host = _host.strip()
-        while _host:
-            ports = run_nmap(_host)
-            if('80' in ports):
-                run_wafwoof(_host)
-                run_gobuster(_host)
-            _host = f.readline()
-        #run_subfinder()
+#    if(args.hostlist is None): exit()
+#    with open(args.hostlist, 'r') as f:
+#        _host = f.readline()
+#        _host = _host.strip()
+#        while _host:
+#            ports = run_nmap(_host)
+#            if('80' in ports):
+#                run_wafwoof(_host)
+#                run_gobuster(_host)
+#            run_bannergrab(ports, _host)
+#            _host = f.readline()
+    run_bannergrab(['22','80', '113'], 'sig.ifs.edu.br')
     # os.system(f'gobuster dir -t 50 --wordlist=/usr/share/wordlists/dirb/big.txt {args.hostlist} ')
     # se nao for vazia > for na lista > cada funcao roda com esse host

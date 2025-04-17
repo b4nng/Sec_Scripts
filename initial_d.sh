@@ -14,4 +14,10 @@ if [ ! "$(which feroxbuster)" ]; then apt install feroxbuster -yy; fi
 
 sleep 1
 
-if [ ! "$(ls /root/go/bin/httpx 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest; fi
+if [ ! "$(ls /root/go/bin/httpx 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest && rm /bin/httpx; ln -s /root/go/bin/httpx /bin/httpx ; fi
+
+sleep 1
+if [ ! "$(ls /leaky-paths+fuzz-bo0om-friendly.txt 2>/dev/null)" ]; then 
+  wget https://raw.githubusercontent.com/ayoubfathi/leaky-paths/refs/heads/main/leaky-paths.txt -O /leaky-paths.txt ;
+  cat /leaky-paths.txt /usr/share/wordlists/seclists/Fuzzing/fuzz-Bo0oM-friendly.txt|sort -u > /leaky-paths+fuzz-bo0om-friendly.txt ;
+fi

@@ -21,3 +21,6 @@ if [ ! "$(ls /leaky-paths+fuzz-bo0om-friendly.txt 2>/dev/null)" ]; then
   wget https://raw.githubusercontent.com/ayoubfathi/leaky-paths/refs/heads/main/leaky-paths.txt -O /leaky-paths.txt ;
   cat /leaky-paths.txt /usr/share/wordlists/seclists/Fuzzing/fuzz-Bo0oM-friendly.txt|sort -u > /leaky-paths+fuzz-bo0om-friendly.txt ;
 fi
+
+if [ ! "$(ls /root/go/bin/subfinder 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest; fi
+

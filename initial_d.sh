@@ -14,7 +14,7 @@ if [ ! "$(which feroxbuster)" ]; then apt install feroxbuster -yy; fi
 
 sleep 1
 
-if [ ! "$(ls /root/go/bin/httpx 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest && rm /bin/httpx; ln -s /root/go/bin/httpx /bin/httpx ; fi
+if [ ! "$(ls /root/go/bin/httpx 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest && rm /bin/httpx; ln -s /root/go/bin/httpx /bin/httpx && httpx -ss; fi
 
 sleep 1
 if [ ! "$(ls /leaky-paths+fuzz-bo0om-friendly.txt 2>/dev/null)" ]; then 

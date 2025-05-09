@@ -24,3 +24,5 @@ fi
 
 if [ ! "$(ls /root/go/bin/subfinder 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest; fi
 
+if [ ! "$(ls /root/go/bin/nuclei 2>/dev/null)" ]; then go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest; fi
+
